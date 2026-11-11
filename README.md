@@ -40,7 +40,7 @@ zip -qry XViewer-unsigned.ipa Payload
 
 ## 服务端要求
 
-配套的服务端是 [x-clone](https://github.com/) 那一套（本地 SQLite + HTTP 服务），需要这几个接口：
+配套的服务端是自己那套（本地 SQLite + 标准库 HTTP 服务），需要这几个接口：
 
 | 接口 | 用途 |
 |---|---|
