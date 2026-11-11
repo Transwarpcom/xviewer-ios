@@ -43,6 +43,7 @@ struct TweetRow: View {
                     }
                     actions.padding(.top, 8)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
