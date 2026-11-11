@@ -40,7 +40,12 @@ struct RootView: View {
                     OfflineView()
                 case .lan, .wan:
                     // 不管局域网还是公网，只要服务端要密码就得先登录
-                    if router.authed {
+                    if router.checkingAuth {
+                        VStack(spacing: 12) {
+                            ProgressView()
+                            Text("检查登录状态…").font(.footnote).foregroundColor(Theme.dim)
+                        }
+                    } else if router.authed {
                         MainTabs()
                     } else {
                         LoginView()

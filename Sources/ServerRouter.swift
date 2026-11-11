@@ -88,6 +88,7 @@ final class ServerRouter: ObservableObject {
     @Published var mode: Mode = .unconfigured
     @Published var base: URL?
     @Published var authed = false
+    @Published var checkingAuth = false
     @Published var statusText = ""
     @Published var probeLog: [String] = []
     @Published var wanText: String
@@ -153,8 +154,11 @@ final class ServerRouter: ObservableObject {
                 if await API(base: lan).ping(timeout: 1.6) {
                     base = lan
                     mode = .lan
-                    // 局域网也不假设免密：万一用户把域名/端口映射填进了这个框，这里必须能发现
+                    // 探测登录态要几百毫秒，这期间不能让界面落到密码页（会闪一下）。
+                    // 已经登录过的话就不用显示「检查中」，重新探测时界面保持不动。
+                    checkingAuth = !authed
                     authed = await API(base: lan).isAuthed()
+                    checkingAuth = false
                     statusText = authed ? "局域网直连 · \(host)" : "局域网可达，需要密码"
                     probeLog.append(authed ? "✓ 局域网可达，免密" : "✓ 局域网可达，但需要密码")
                     startMonitor()
@@ -170,7 +174,9 @@ final class ServerRouter: ObservableObject {
             if await API(base: wan).ping(timeout: 4.5) {
                 base = wan
                 mode = .wan
+                checkingAuth = !authed
                 authed = await API(base: wan).isAuthed()
+                checkingAuth = false
                 statusText = authed ? "公网 · \(wan.host ?? "")" : "公网可达，需要密码"
                 probeLog.append("✓ 公网可达\(authed ? "，登录态有效" : "，需登录")")
                 startMonitor()
