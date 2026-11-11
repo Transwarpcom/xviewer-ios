@@ -82,6 +82,23 @@ struct SettingsView: View {
                     }
                 }
 
+                Section {
+                    if router.authed {
+                        Button("重新登录（清除本机会话）") {
+                            router.logout()
+                        }
+                        .foregroundColor(Theme.blue)
+                    } else {
+                        Text("当前未登录，正在等密码")
+                            .font(.footnote)
+                            .foregroundColor(.orange)
+                    }
+                } header: {
+                    Text("登录")
+                } footer: {
+                    Text("清除后会立刻回到密码页。局域网服务器如果本身免密，重新探测会直接进去。")
+                }
+
                 Section("关于") {
                     HStack {
                         Text("版本")

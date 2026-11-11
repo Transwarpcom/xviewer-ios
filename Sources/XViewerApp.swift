@@ -38,9 +38,8 @@ struct RootView: View {
                     }
                 case .offline:
                     OfflineView()
-                case .lan:
-                    MainTabs()
-                case .wan:
+                case .lan, .wan:
+                    // 不管局域网还是公网，只要服务端要密码就得先登录
                     if router.authed {
                         MainTabs()
                     } else {

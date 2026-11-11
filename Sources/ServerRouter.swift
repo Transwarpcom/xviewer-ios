@@ -150,9 +150,10 @@ final class ServerRouter: ObservableObject {
                 if await API(base: lan).ping(timeout: 1.6) {
                     base = lan
                     mode = .lan
-                    authed = true
-                    statusText = "局域网直连 · \(host)"
-                    probeLog.append("✓ 局域网可达，已切到局域网")
+                    // 局域网也不假设免密：万一用户把域名/端口映射填进了这个框，这里必须能发现
+                    authed = await API(base: lan).isAuthed()
+                    statusText = authed ? "局域网直连 · \(host)" : "局域网可达，需要密码"
+                    probeLog.append(authed ? "✓ 局域网可达，免密" : "✓ 局域网可达，但需要密码")
                     startMonitor()
                     return
                 }
@@ -207,6 +208,15 @@ final class ServerRouter: ObservableObject {
             probeLog.append("✗ 密码不对")
         }
         return ok
+    }
+
+    /// 清掉 cookie 和内存里的登录态，下一次进 RootView 就会落到 LoginView
+    func logout() {
+        if let cookies = HTTPCookieStorage.shared.cookies {
+            for c in cookies { HTTPCookieStorage.shared.deleteCookie(c) }
+        }
+        authed = false
+        probeLog.append("· 已清除登录态")
     }
 
     var storedPassword: String? { Keychain.get("server.password") }
