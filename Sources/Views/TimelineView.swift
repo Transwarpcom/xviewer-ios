@@ -64,6 +64,9 @@ struct TimelineView: View {
                     DetailView(tweetID: id)
                 }
             }
+            .navigationDestination(for: UserRef.self) { ref in
+                UserProfileView(name: ref.name)
+            }
         }
         .tint(Theme.blue)
     }
@@ -152,6 +155,9 @@ struct SearchView: View {
             .onSubmit(of: .search) { Task { await run(reset: true) } }
             .navigationDestination(isPresented: $showDetail) {
                 if let id = selectedID { DetailView(tweetID: id) }
+            }
+            .navigationDestination(for: UserRef.self) { ref in
+                UserProfileView(name: ref.name)
             }
         }
         .tint(Theme.blue)

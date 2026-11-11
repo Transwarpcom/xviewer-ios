@@ -89,3 +89,8 @@ struct PingInfo: Decodable {
     let protected: Bool?
     let tweets: Int?
 }
+
+/// 导航用：点作者名/头像进用户页
+struct UserRef: Hashable {
+    let name: String
+}

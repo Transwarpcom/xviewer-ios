@@ -53,28 +53,34 @@ struct TweetRow: View {
 
     @ViewBuilder
     private var avatar: some View {
-        if !tweet.avatar.isEmpty, let url = router.api?.absolute(tweet.avatar) {
-            RemoteImage(url: url)
-                .frame(width: 40, height: 40)
-                .clipShape(Circle())
-        } else {
-            Circle()
-                .fill(Theme.blue.opacity(0.35))
-                .frame(width: 40, height: 40)
-                .overlay(
-                    Text(String(tweet.author.prefix(1)).uppercased())
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.white)
-                )
+        NavigationLink(value: UserRef(name: tweet.author)) {
+            if !tweet.avatar.isEmpty, let url = router.api?.absolute(tweet.avatar) {
+                RemoteImage(url: url)
+                    .frame(width: 40, height: 40)
+                    .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(Theme.blue.opacity(0.35))
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        Text(String(tweet.author.prefix(1)).uppercased())
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                    )
+            }
         }
+        .buttonStyle(.plain)
     }
 
     private var header: some View {
         HStack(spacing: 4) {
-            Text(tweet.nick.isEmpty ? tweet.author : tweet.nick)
-                .font(.system(size: 15, weight: .bold))
-                .foregroundColor(Theme.text)
-                .lineLimit(1)
+            NavigationLink(value: UserRef(name: tweet.author)) {
+                Text(tweet.nick.isEmpty ? tweet.author : tweet.nick)
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(Theme.text)
+                    .lineLimit(1)
+            }
+            .buttonStyle(.plain)
             Text("@\(tweet.author)")
                 .font(.system(size: 15))
                 .foregroundColor(Theme.dim)
