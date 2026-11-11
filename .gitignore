@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+*.ipa
+Payload/
+
+# 生成的 Info.plist（xcodegen 每次从 project.yml 生成）
+Resources/Info.plist

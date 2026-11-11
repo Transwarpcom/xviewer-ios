@@ -1,0 +1,43 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ipa:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild -project XViewer.xcodeproj -scheme XViewer -sdk iphoneos \
+            -configuration Release -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/XViewer.app Payload/
+          zip -qry XViewer-unsigned.ipa Payload
+          echo "--- ipa 内容抽查 ---"
+          unzip -l XViewer-unsigned.ipa | head -20
+          echo "--- 签名残留检查（应为 0）---"
+          unzip -l XViewer-unsigned.ipa | grep -cE "SC_Info|mobileprovision|_CodeSignature" || true
+          ls -lh XViewer-unsigned.ipa
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: XViewer-ipa
+          path: XViewer-unsigned.ipa
+          retention-days: 90
