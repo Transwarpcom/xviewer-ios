@@ -83,7 +83,7 @@ struct LoginView: View {
                 error = nil
                 Task {
                     let ok = await router.login(password)
-                    if !ok { error = "密码不对，或者服务器拒绝了这个请求" }
+                    if !ok { error = "登录没成功：密码不对，或者服务器下发的 cookie 没被接受。重开 App 再试一次。" }
                     busy = false
                 }
             } label: {

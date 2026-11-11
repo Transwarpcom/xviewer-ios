@@ -98,6 +98,9 @@ final class ServerRouter: ObservableObject {
     private var pathMonitor: NWPathMonitor?
 
     init() {
+        // 默认策略 onlyFromMainDocumentDomain，API 请求（非 document）可能不收 Set-Cookie，
+        // 表现就是「密码明明对，登录后还是 401」。必须改成 always。
+        HTTPCookieStorage.shared.cookieAcceptPolicy = .always
         wanText = UserDefaults.standard.string(forKey: "server.wan") ?? ""
         lanText = UserDefaults.standard.string(forKey: "server.lan") ?? ""
     }
